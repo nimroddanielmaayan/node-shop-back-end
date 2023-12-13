@@ -4,4 +4,5 @@ build
 notes.md
 desktop.ini
 secrets.txt
+config.env
 .DS_Store
