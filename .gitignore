@@ -1,0 +1,7 @@
+node_modules
+dist
+build
+notes.md
+desktop.ini
+secrets.txt
+.DS_Store

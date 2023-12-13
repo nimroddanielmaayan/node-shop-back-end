@@ -1,0 +1,14 @@
+{
+  "name": "node-shop-back-end",
+  "version": "1.0.0",
+  "description": "A node practice back end",
+  "main": "server.js",
+  "scripts": {
+    "start": "nodemon server.js"
+  },
+  "author": "Nimrod Mayan",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
