@@ -1,49 +1,49 @@
-/* Imports and configs */
+/* Imports and setup */
 
 // Import libraries
 const express = require("express");
-const dotenv = require("dotenv");
+const mongoose = require("mongoose");
 const morgan = require("morgan");
+const dotenv = require("dotenv");
 
 // Configure dotenv
 dotenv.config({ path: "./config.env" });
 
-// Import files
-// (complete later)
-
-/* Constants */
-
-// Start server
+// Initialize app
 const app = express();
-const port = 3000;
 
-/* Middleware (runs between req and res) */
+// Import files
+const Product = require("./models/productModel");
 
-// Serve static files
+/* Add middleware (runs between req and res) */
+
+// Serve static files to client
 app.use(express.static(`${__dirname}/public`));
 
 // Parse req data to JSON
 app.use(express.json());
 
-// Log req data
+// Log req basic data to console
 app.use(morgan("dev"));
-
-// Example custom middleware
-app.use((req, res, next) => {
-  console.log("Hello from the middleware 👋");
-  next();
-});
 
 /* API Routes */
 
 // Get all products
-app.get("/api/v1/products", (req, res) => {
-  res.status(200).json({
-    status: "success",
-    data: {
-      products: "no products, no database yet",
-    },
-  });
+app.get("/api/v1/products", async (req, res) => {
+  try {
+    const products = await Product.find();
+    res.status(200).json({
+      status: "success",
+      data: {
+        products,
+      },
+    });
+  } catch (err) {
+    res.status(500).json({
+      status: "error",
+      message: err.message,
+    });
+  }
 });
 
 // Create a product
@@ -89,7 +89,19 @@ app.get("/api/v1/products/:id", (req, res) => {
   });
 });
 
+/* Database and server */
+
+// Connect to database
+dbConnect().catch((err) => console.log(err));
+
+async function dbConnect() {
+  await mongoose.connect(process.env.CONNECT_DB);
+  console.log("Connected to database");
+}
+
 // Server
+const port = 3000;
+
 app.listen(port, () => {
-  console.log(`Listening on port ${port}`);
+  console.log(`Server listening on port ${port}`);
 });
