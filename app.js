@@ -46,47 +46,97 @@ app.get("/api/v1/products", async (req, res) => {
   }
 });
 
+// Get a product by id
+app.get("/api/v1/products/:id", async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id);
+    res.status(200).json({
+      status: "success",
+      data: {
+        requestId: req.params.id,
+        product,
+      },
+    });
+  } catch (err) {
+    res.status(500).json({
+      status: "error",
+      message: err.message,
+    });
+  }
+});
+
 // Create a product
-app.post("/api/v1/products", (req, res) => {
-  console.log(req.body);
-  res.status(200).json({
-    status: "success",
-    data: {
-      product: "product not created, no database yet",
-    },
-  });
+app.post("/api/v1/products", async (req, res) => {
+  try {
+    const newProduct = await Product.create(req.body);
+    res.status(201).json({
+      status: "success",
+      data: {
+        product: newProduct,
+      },
+    });
+  } catch (err) {
+    res.status(500).json({
+      status: "error",
+      message: err.message,
+    });
+  }
 });
 
 // Modify a product
-app.patch("/api/v1/products", (req, res) => {
-  console.log(req.body);
-  res.status(200).json({
-    status: "success",
-    data: {
-      product: "product not modified, no database yet",
-    },
-  });
+app.patch("/api/v1/products/:id", async (req, res) => {
+  try {
+    const product = await Product.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true,
+    });
+    res.status(200).json({
+      status: "success",
+      data: {
+        product,
+      },
+    });
+  } catch (err) {
+    res.status(500).json({
+      status: "error",
+      message: err.message,
+    });
+  }
 });
 
-// Delete all products (I think... Check this later)
-app.delete("/api/v1/products", (req, res) => {
-  res.status(200).json({
-    status: "success",
-    data: {
-      product: "products not deleted, no database yet",
-    },
-  });
+// Delete all products
+app.delete("/api/v1/products", async (req, res) => {
+  try {
+    await Product.deleteMany();
+    const products = await Product.find();
+    res.status(204).json({
+      status: "success",
+      data: {
+        products,
+      },
+    });
+  } catch (err) {
+    res.status(500).json({
+      status: "error",
+      message: err.message,
+    });
+  }
 });
 
-// Get a product by id
-app.get("/api/v1/products/:id", (req, res) => {
-  res.status(200).json({
-    status: "success",
-    data: {
-      requestId: req.params.id,
-      products: "product not found, no database yet",
-    },
-  });
+// Delete product by id
+app.delete("/api/v1/products/:id", async (req, res) => {
+  try {
+    await Product.findByIdAndDelete(req.params.id);
+    res.status(204).json({
+      status: "success",
+      data: null,
+    });
+  } catch (err) {
+    res.status(500).json({
+      status: "error",
+      message: err.message,
+    });
+  }
 });
 
 /* Database and server */
